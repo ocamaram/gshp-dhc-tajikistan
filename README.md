@@ -7,19 +7,54 @@ based on building footprint data from a GeoPackage file.
 
 ### `preprocess_dushanbe.py`
 Loads the raw building footprint GeoPackage (`Data/Dushanbe.gpkg`) and
-computes the following fields for each building:
+enriches each building with the following fields:
 
 | Field | Description |
 |---|---|
 | `floors` | Number of floors estimated from building height (height / 2.5) |
-| `Type` | Building typology based on `Use` and floor count (see tables below) |
+| `Tagging` | OSM `building=*` tag value (from spatial join with Geofabrik data) |
+| `Use` | `residential` or `tertiary`, derived from `Tagging` |
+| `Type` | Building typology (see tables below) |
 | `Specific Heat Demand [kWh/m2·year]` | Specific heat demand assigned by typology |
 | `Heated Area [m2]` | Total heated floor area (footprint area × floors) |
 | `Total Heat Demand [GWh/year]` | Annual heat demand per building |
 
-The input field `Use` (stored in the GeoPackage) controls which typology
-classification is applied: `"residential"` uses the Type Single Family–VI
-scheme; `"tertiary"` uses School / Hospital / Office / Other.
+#### OSM Tagging → classification pipeline
+
+1. **Spatial join with Geofabrik** (`Data/Geofabrik_tajikistan.gpkg`, layer
+   `gis_osm_buildings_a_free`): for each building, the centroid is matched
+   against OSM polygons with an explicit `building` tag. Where a match is
+   found, the OSM tag is stored in `Tagging`.
+
+2. **Default fallback** (where no OSM tag is available):
+   - Residential buildings (original `Use` field): `house` (≤ 2 floors) or
+     `apartments` (> 2 floors).
+   - Tertiary buildings: `yes`.
+
+3. **`Use` from `Tagging`**: tags in the residential group → `Use=residential`;
+   all others → `Use=tertiary`.
+
+4. **`Type` assignment**:
+   - **Residential**: floor count determines the type (Type Single Family–VI).
+   - **Tertiary**: `Tagging` determines the type directly; floor count is used
+     only to compute heated area and heat demand.
+
+#### OSM tag → Use mapping
+
+| `building=` tag | Use |
+|---|---|
+| `house`, `detached`, `semidetached_house`, `bungalow`, `terrace` | residential |
+| `apartments`, `residential`, `dormitory`, `block` | residential |
+| everything else | tertiary |
+
+#### OSM tag → Type mapping (tertiary)
+
+| `building=` tag | Type |
+|---|---|
+| `school`, `kindergarten`, `college`, `university` | School |
+| `hospital`, `clinic`, `doctors` | Hospital |
+| `office`, `commercial`, `retail`, `industrial` | Office |
+| `yes`, `public`, `civic`, `government`, `mosque`, `church`, `warehouse` | Other |
 
 Output: `Results/Dushanbe_processed.gpkg`
 
@@ -55,6 +90,13 @@ configurable zoom level (`MAP_ZOOM = 1.5` by default).
 ### Total heat demand
 ![Total heat demand](Results/Total_Heat_Demand.png)
 
+## Data
+
+| File | Description |
+|---|---|
+| `Data/Dushanbe.gpkg` | Building footprints with `height`, `Area`, `Volume`, `Surface`, `Use` |
+| `Data/Geofabrik_tajikistan.gpkg` | OSM extract for Tajikistan ([Geofabrik](https://download.geofabrik.de/asia/tajikistan.html)); layer `gis_osm_buildings_a_free` used for tagging |
+
 ## Requirements
 
 ```
@@ -75,8 +117,8 @@ python3 -m venv .venv
 ## Usage
 
 ```bash
-.venv/bin/python3 preprocess_dushanbe.py   # generate processed GeoPackage
-.venv/bin/python3 maps_dushanbe.py         # generate summary + maps
+.venv/bin/python3 preprocess_dushanbe.py   # spatial join + classification → Dushanbe_processed.gpkg
+.venv/bin/python3 maps_dushanbe.py         # summary + static and interactive maps
 ```
 
 ## Building typology

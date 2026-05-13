@@ -29,7 +29,8 @@ print(f"  {len(gdf)} polygons loaded.")
 
 TYPE_ORDER = [
     "Type Single Family", "Type I", "Type II", "Type III",
-    "Type IV", "Type V", "Type VI"
+    "Type IV", "Type V", "Type VI",
+    "School", "Hospital", "Office", "Other",
 ]
 TYPE_COLORS = {
     "Type Single Family": "#a8d5a2",
@@ -39,15 +40,23 @@ TYPE_COLORS = {
     "Type IV":  "#f08c30",
     "Type V":   "#e05a1a",
     "Type VI":  "#9b1a1a",
+    "School":   "#b39ddb",
+    "Hospital": "#f48fb1",
+    "Office":   "#4db6ac",
+    "Other":    "#90a4ae",
 }
 heat_demand_map = {
     "Type Single Family": 145,
-    "Type I":  74,
-    "Type II": 55,
-    "Type III": 59,
-    "Type IV": 65,
-    "Type V":  54,
-    "Type VI": 40,
+    "Type I":    74,
+    "Type II":   55,
+    "Type III":  59,
+    "Type IV":   65,
+    "Type V":    54,
+    "Type VI":   40,
+    "School":    60.0,
+    "Hospital":  102.5,
+    "Office":    67.5,
+    "Other":     67.5,
 }
 
 # ── Compute map extent (center + zoom) ────────────────────────────────────────
