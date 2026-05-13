@@ -44,6 +44,17 @@ specific and total heat demand per typology.
 All maps are centred on the geometric centroid of the dataset with a
 configurable zoom level (`MAP_ZOOM = 1.5` by default).
 
+## Results
+
+### Building typologies
+![Building typologies](Results/Types.png)
+
+### Specific heat demand
+![Specific heat demand](Results/Specific_Heat_Demand.png)
+
+### Total heat demand
+![Total heat demand](Results/Total_Heat_Demand.png)
+
 ## Requirements
 
 ```
