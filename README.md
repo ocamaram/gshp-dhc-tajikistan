@@ -12,10 +12,14 @@ computes the following fields for each building:
 | Field | Description |
 |---|---|
 | `floors` | Number of floors estimated from building height (height / 2.5) |
-| `Type` | Building typology (Single Family, Type I–VI) based on floor count |
+| `Type` | Building typology based on `Use` and floor count (see tables below) |
 | `Specific Heat Demand [kWh/m2·year]` | Specific heat demand assigned by typology |
 | `Heated Area [m2]` | Total heated floor area (footprint area × floors) |
 | `Total Heat Demand [GWh/year]` | Annual heat demand per building |
+
+The input field `Use` (stored in the GeoPackage) controls which typology
+classification is applied: `"residential"` uses the Type Single Family–VI
+scheme; `"tertiary"` uses School / Hospital / Office / Other.
 
 Output: `Results/Dushanbe_processed.gpkg`
 
@@ -66,6 +70,8 @@ python3 -m venv .venv
 
 ## Building typology
 
+### Residential (`Use = "residential"`)
+
 | Type | Floors | Specific Heat Demand [kWh/m²·year] |
 |---|---|---|
 | Type Single Family | ≤ 2 | 145 |
@@ -75,3 +81,12 @@ python3 -m venv .venv
 | Type IV | 9 | 65 |
 | Type V | 10–11 | 54 |
 | Type VI | ≥ 12 | 40 |
+
+### Tertiary (`Use = "tertiary"`)
+
+| Type | Floors | Specific Heat Demand [kWh/m²·year] |
+|---|---|---|
+| School | ≤ 2 | 60 |
+| Hospital | 3–4 | 102.5 |
+| Office | 5 | 67.5 |
+| Other | ≥ 6 | 67.5 |

@@ -14,7 +14,7 @@ gdf["floors"] = (gdf["height"] / 2.5).astype(int)
 gdf["floors"] = gdf["floors"].clip(lower=1)
 
 # ── Building Type ─────────────────────────────────────────────────────────────
-def assign_type(f):
+def assign_type_residential(f):
     if f <= 2:
         return "Type Single Family"
     elif f == 3:
@@ -30,7 +30,21 @@ def assign_type(f):
     else:
         return "Type VI"
 
-gdf["Type"] = gdf["floors"].apply(assign_type)
+def assign_type_tertiary(f):
+    if f <= 2:
+        return "School"
+    elif f <= 4:
+        return "Hospital"
+    elif f <= 5:
+        return "Office"
+    else:
+        return "Other"
+
+gdf["Type"] = gdf.apply(
+    lambda row: assign_type_residential(row["floors"]) if row["Use"] == "residential"
+    else assign_type_tertiary(row["floors"]),
+    axis=1
+)
 
 # ── Specific Heat Demand ──────────────────────────────────────────────────────
 heat_demand_map = {
@@ -41,6 +55,10 @@ heat_demand_map = {
     "Type IV": 65,
     "Type V":  54,
     "Type VI": 40,
+    "School":   60.0,
+    "Hospital": 102.5,
+    "Office":   67.5,
+    "Other":    67.5,
 }
 gdf["Specific Heat Demand [kWh/m2·year]"] = gdf["Type"].map(heat_demand_map)
 

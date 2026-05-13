@@ -11,10 +11,16 @@ import branca.colormap as bcm
 INPUT_FILE = os.path.join("Results", "Dushanbe_processed.gpkg")
 OUTPUT_DIR = "Results"
 
+HEATMAP_COLORS = ["#FFB347", "#E84000", "#C80000", "#9B0000", "#7F0000"]
+HEATMAP_CMAP = mcolors.LinearSegmentedColormap.from_list("orange_red", HEATMAP_COLORS)
+
 # ── Map display parameters ────────────────────────────────────────────────────
+# Center coordinates (WGS84 lat/lon)
+CENTER_LAT = 38.559732
+CENTER_LON = 68.771771
 # MAP_ZOOM > 1 zooms in (1.5 = show 67% of full extent); 1.0 = show full extent
-MAP_ZOOM = 1.5
-FOLIUM_ZOOM = 13
+MAP_ZOOM = 2.0
+FOLIUM_ZOOM = 14
 
 # ── Load processed data ───────────────────────────────────────────────────────
 print("Loading processed GeoPackage...")
@@ -45,9 +51,13 @@ heat_demand_map = {
 }
 
 # ── Compute map extent (center + zoom) ────────────────────────────────────────
+# Convert center from WGS84 to the projected CRS of the data
+center_proj = gpd.GeoSeries(
+    gpd.points_from_xy([CENTER_LON], [CENTER_LAT]), crs="EPSG:4326"
+).to_crs(gdf.crs).iloc[0]
+cx, cy = center_proj.x, center_proj.y
+
 bounds = gdf.total_bounds  # [minx, miny, maxx, maxy]
-cx = (bounds[0] + bounds[2]) / 2
-cy = (bounds[1] + bounds[3]) / 2
 hw = (bounds[2] - bounds[0]) / 2 / MAP_ZOOM
 hh = (bounds[3] - bounds[1]) / 2 / MAP_ZOOM
 
@@ -90,7 +100,7 @@ for t in TYPE_ORDER:
         subset.plot(ax=ax, color=TYPE_COLORS[t], linewidth=0.3, edgecolor="white")
 
 patches = [
-    mpatches.Patch(color=TYPE_COLORS[t], label=f"{t}  ({heat_demand_map[t]} kWh/m²·year)")
+    mpatches.Patch(color=TYPE_COLORS[t], label=t)
     for t in TYPE_ORDER if t in gdf["Type"].values
 ]
 ax.legend(handles=patches, title="Building Type", loc="lower left",
@@ -109,7 +119,7 @@ print("Map 'Types.png' saved.")
 # ══════════════════════════════════════════════════════════════════════════════
 # MAP 3 — Total Heat Demand [GWh/year]  (YlOrRd gradient)
 # ══════════════════════════════════════════════════════════════════════════════
-def plot_heatmap(gdf, column, title, filename, cbar_label, cmap="YlOrRd"):
+def plot_heatmap(gdf, column, title, filename, cbar_label, cmap=HEATMAP_CMAP):
     fig, ax = plt.subplots(figsize=(14, 10))
     vmin, vmax = gdf[column].min(), gdf[column].max()
     gdf.plot(ax=ax, column=column, cmap=cmap, linewidth=0.2,
@@ -150,19 +160,16 @@ plot_heatmap(
 print("\nGenerating interactive maps...")
 
 gdf_web = gdf.copy()
-gdf_web["geometry"] = gdf_web["geometry"].simplify(tolerance=1)
-
-# Compute center in projected CRS, then convert to WGS84
-center_pt = gpd.GeoSeries([gdf.dissolve().centroid.iloc[0]], crs=gdf.crs).to_crs(epsg=4326).iloc[0]
-center = [center_pt.y, center_pt.x]
-
+gdf_web["geometry"] = gdf_web["geometry"].simplify(tolerance=5)
 gdf_web = gdf_web.to_crs(epsg=4326)
+
+center = [CENTER_LAT, CENTER_LON]
 
 # ── Interactive Map 1 — Building Types ───────────────────────────────────────
 cols = ["Type", "floors", "Heated Area [m2]",
         "Specific Heat Demand [kWh/m2·year]", "Total Heat Demand [GWh/year]", "geometry"]
 
-m1 = folium.Map(location=center, zoom_start=FOLIUM_ZOOM, tiles="CartoDB positron")
+m1 = folium.Map(location=center, zoom_start=FOLIUM_ZOOM, tiles="CartoDB positron", prefer_canvas=True)
 
 def style_type(feature):
     t = feature["properties"]["Type"]
@@ -202,12 +209,12 @@ print("Interactive map 'Types_interactive.html' saved.")
 def interactive_choropleth(gdf_web, column, filename, caption,
                             colors=None, aliases=None):
     if colors is None:
-        colors = ["#ffffb2", "#fecc5c", "#fd8d3c", "#f03b20", "#bd0026"]
+        colors = HEATMAP_COLORS
     vmin = gdf_web[column].min()
     vmax = gdf_web[column].max()
     colormap = bcm.LinearColormap(colors, vmin=vmin, vmax=vmax, caption=caption)
 
-    m = folium.Map(location=center, zoom_start=FOLIUM_ZOOM, tiles="CartoDB positron")
+    m = folium.Map(location=center, zoom_start=FOLIUM_ZOOM, tiles="CartoDB positron", prefer_canvas=True)
 
     def style_fn(feature):
         val = feature["properties"][column]
