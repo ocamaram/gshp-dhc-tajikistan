@@ -137,23 +137,24 @@ after reprojection to EPSG:32642.
 
 ### Heat demand by building type
 
-| Type | Buildings | NFA [M m²] | Heat Demand [GWh/year] | % Total |
-|---|---|---|---|---|
-| Type Single Family | 126,059 | 25.4 | 3,678.6 | 35.8% |
-| Type I (3 floors) | 41,429 | 42.0 | 3,108.2 | 30.2% |
-| Type II (4 floors) | 9,138 | 26.1 | 1,436.2 | 14.0% |
-| Type III (5–8 floors) | 1,557 | 19.1 | 1,124.2 | 10.9% |
-| Type VI (12–20 floors) | 749 | 15.6 | 622.1 | 6.0% |
-| Other (tertiary) | 617 | 1.5 | 102.2 | 1.0% |
-| Office | 153 | 1.5 | 98.2 | 1.0% |
-| Type V (10–11 floors) | 113 | 1.0 | 52.1 | 0.5% |
-| School | 63 | 0.6 | 35.2 | 0.3% |
-| Type IV (9 floors) | 16 | 0.2 | 16.2 | 0.2% |
-| Hospital | 18 | 0.1 | 11.4 | 0.1% |
+| Type | SHD [kWh/m²·year] | Buildings | NFA [M m²] | Heat Demand [GWh/year] | % Total |
+|---|---|---|---|---|---|
+| Type Single Family | 145 | 126,087 | 17.4 | 2,522.0 | 35.2% |
+| Type I (3 floors) | 74 | 41,429 | 29.4 | 2,175.7 | 30.4% |
+| Type II (4 floors) | 55 | 9,140 | 18.3 | 1,005.7 | 14.0% |
+| Type III (5–8 floors) | 59 | 1,558 | 13.4 | 788.2 | 11.0% |
+| Type VI (12–20 floors) | 40 | 753 | 11.0 | 441.2 | 6.2% |
+| Other (tertiary) | 67.5 | 582 | 1.3 | 84.8 | 1.2% |
+| Office | 67.5 | 153 | 1.0 | 68.7 | 1.0% |
+| Type V (10–11 floors) | 54 | 113 | 0.7 | 36.4 | 0.5% |
+| School | 60 | 63 | 0.4 | 24.7 | 0.3% |
+| Type IV (9 floors) | 65 | 16 | 0.2 | 11.3 | 0.2% |
+| Hospital | 102.5 | 18 | 0.1 | 8.0 | 0.1% |
+| **Total** | | **179,912** | **93.1** | **7,166.7** | **100%** |
 
-Type Single Family dominates heat demand (35.8%) despite having the lowest
+Type Single Family dominates heat demand (35.2%) despite having the lowest
 total NFA, due to its high specific heat demand (145 kWh/m²·year).
-Type I apartment blocks are the largest contributor by NFA (42.0 M m²).
+Type I apartment blocks are the largest contributor by NFA (29.4 M m²).
 
 ### Cooling demand by building type
 
@@ -164,20 +165,20 @@ Type I apartment blocks are the largest contributor by NFA (42.0 M m²).
 > `cooling_demand_map` in `preprocess_dushanbe.py` and re-running both scripts
 > regenerates all results and maps automatically.
 
-| Type | SCD [kWh/m²·year] | Buildings | NFA [M m²] | Cooling Demand [GWh/year] |
-|---|---|---|---|---|
-| Type Single Family | 0 | 126,087 | 17.4 | 0.0 |
-| Type I (3 floors) | 0 | 41,429 | 29.4 | 0.0 |
-| Type II (4 floors) | 0 | 9,140 | 18.3 | 0.0 |
-| Type III (5–8 floors) | 0 | 1,558 | 13.4 | 0.0 |
-| Type VI (12–20 floors) | 0 | 753 | 11.0 | 0.0 |
-| Type V (10–11 floors) | 0 | 113 | 0.7 | 0.0 |
-| Type IV (9 floors) | 0 | 16 | 0.2 | 0.0 |
-| School | 0 | 63 | 0.4 | 0.0 |
-| Hospital | 90 *(prelim.)* | 18 | 0.1 | 7.0 |
-| Office | 45 *(prelim.)* | 153 | 1.0 | 45.8 |
-| Other | 40 *(prelim.)* | 582 | 1.3 | 50.3 |
-| **Total** | | **179,912** | **93.1** | **103.1** |
+| Type | SCD [kWh/m²·year] | Buildings | NFA [M m²] | Cooling Demand [GWh/year] | % Total |
+|---|---|---|---|---|---|
+| Type Single Family | 0 | 126,087 | 17.4 | 0.0 | 0.0% |
+| Type I (3 floors) | 0 | 41,429 | 29.4 | 0.0 | 0.0% |
+| Type II (4 floors) | 0 | 9,140 | 18.3 | 0.0 | 0.0% |
+| Type III (5–8 floors) | 0 | 1,558 | 13.4 | 0.0 | 0.0% |
+| Type VI (12–20 floors) | 0 | 753 | 11.0 | 0.0 | 0.0% |
+| Type V (10–11 floors) | 0 | 113 | 0.7 | 0.0 | 0.0% |
+| Type IV (9 floors) | 0 | 16 | 0.2 | 0.0 | 0.0% |
+| School | 0 | 63 | 0.4 | 0.0 | 0.0% |
+| Hospital | 90 *(prelim.)* | 18 | 0.1 | 7.0 | 6.8% |
+| Office | 45 *(prelim.)* | 153 | 1.0 | 45.8 | 44.4% |
+| Other | 40 *(prelim.)* | 582 | 1.3 | 50.3 | 48.7% |
+| **Total** | | **179,912** | **93.1** | **103.1** | **100%** |
 
 ## Data
 
@@ -214,15 +215,15 @@ python3 -m venv .venv
 
 ### Residential (`Use = "residential"`)
 
-| Type | Floors | Specific Heat Demand [kWh/m²·year] |
-|---|---|---|
-| Type Single Family | ≤ 2 | 145 |
-| Type I | 3 | 74 |
-| Type II | 4 | 55 |
-| Type III | 5–8 | 59 |
-| Type IV | 9 | 65 |
-| Type V | 10–11 | 54 |
-| Type VI | 12–20 | 40 |
+| Type | Floors | SHD [kWh/m²·year] | SCD [kWh/m²·year] |
+|---|---|---|---|
+| Type Single Family | ≤ 2 | 145 | 0 |
+| Type I | 3 | 74 | 0 |
+| Type II | 4 | 55 | 0 |
+| Type III | 5–8 | 59 | 0 |
+| Type IV | 9 | 65 | 0 |
+| Type V | 10–11 | 54 | 0 |
+| Type VI | 12–20 | 40 | 0 |
 
 ### Tertiary (`Use = "tertiary"`)
 
