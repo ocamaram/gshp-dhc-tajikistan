@@ -11,6 +11,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 RESIDENTIAL_TAGS = {
     "house", "detached", "semidetached_house", "bungalow", "terrace",
     "apartments", "residential", "dormitory", "block",
+    "yes;residential",
 }
 
 # ── OSM tag → Type (tertiary only) ────────────────────────────────────────────
@@ -33,6 +34,9 @@ TERTIARY_TAG_TO_TYPE = {
     "mosque":       "Other",
     "church":       "Other",
     "warehouse":    "Other",
+    "hotel":        "Other",
+    "education":    "School",
+    "roof":         "Other",
 }
 
 # ── Load input data ────────────────────────────────────────────────────────────
@@ -41,12 +45,13 @@ gdf = gpd.read_file(INPUT_FILE)
 print(f"  {len(gdf)} polygons loaded. Columns: {list(gdf.columns)}")
 
 # ── Floors ────────────────────────────────────────────────────────────────────
-gdf["floors"] = (gdf["height"] / 2.5).astype(int).clip(lower=1)
+gdf["floors"] = (gdf["height"] / 2.5).astype(int).clip(lower=1, upper=20)
 
 # ── OSM spatial join to get building tag ──────────────────────────────────────
 print("Loading OSM buildings...")
 osm = gpd.read_file(OSM_FILE, layer=OSM_LAYER)
-osm = osm[osm["type"].notna() & (osm["type"] != "")][["type", "geometry"]]
+IGNORE_TAGS = {"construction"}
+osm = osm[osm["type"].notna() & (osm["type"] != "") & ~osm["type"].isin(IGNORE_TAGS)][["type", "geometry"]]
 osm = osm.to_crs(gdf.crs)
 print(f"  {len(osm)} OSM buildings with explicit tag.")
 
@@ -58,6 +63,22 @@ joined = gpd.sjoin(centroids[["geometry"]], osm, how="left", predicate="within")
 # Keep first match per polygon in case of duplicates
 joined = joined[~joined.index.duplicated(keep="first")]
 gdf["osm_type"] = joined["type"]
+
+# ── Use: OSM where available, heuristic otherwise ─────────────────────────────
+# Heuristic: residential by default; 1-floor buildings > 500 m² → tertiary
+AREA_THRESH_TERTIARY = 500  # m²
+
+def assign_use(row):
+    if isinstance(row["osm_type"], str) and row["osm_type"]:
+        return "residential" if row["osm_type"] in RESIDENTIAL_TAGS else "tertiary"
+    if row["floors"] == 1 and row["Area"] > AREA_THRESH_TERTIARY:
+        return "tertiary"
+    return "residential"
+
+gdf["Use"] = gdf.apply(assign_use, axis=1)
+n_osm_use  = (gdf["osm_type"].notna() & (gdf["osm_type"] != "")).sum()
+n_heuristic = ((gdf["Use"] == "tertiary") & ~(gdf["osm_type"].notna() & (gdf["osm_type"] != ""))).sum()
+print(f"  Use assigned: {n_osm_use} from OSM tag, {n_heuristic} tertiary by area heuristic, rest residential by default.")
 
 # ── Tagging: OSM tag where available, default otherwise ───────────────────────
 def default_tagging(row):
@@ -114,10 +135,33 @@ heat_demand_map = {
 }
 gdf["Specific Heat Demand [kWh/m2·year]"] = gdf["Type"].map(heat_demand_map)
 
-# ── Heated Area & Total Heat Demand ───────────────────────────────────────────
-gdf["Heated Area [m2]"] = gdf["Area"] * gdf["floors"]
+# ── Specific Cooling Demand ───────────────────────────────────────────────────
+# Placeholder: values to be updated when cooling demand data is available
+cooling_demand_map = {
+    "Type Single Family": None,
+    "Type I":    None,
+    "Type II":   None,
+    "Type III":  None,
+    "Type IV":   None,
+    "Type V":    None,
+    "Type VI":   None,
+    "School":    None,
+    "Hospital":  None,
+    "Office":    None,
+    "Other":     None,
+}
+gdf["Specific Cooling Demand [kWh/m2·year]"] = gdf["Type"].map(cooling_demand_map)
+
+# ── Conditioned Area, Heat & Cooling Demand ───────────────────────────────────
+GFA_TO_NFA = 0.70
+gdf["Heated Area [m2]"]  = gdf["Area"] * gdf["floors"] * GFA_TO_NFA
+gdf["Cooling Area [m2]"] = gdf["Heated Area [m2]"]
+
 gdf["Total Heat Demand [GWh/year]"] = (
     gdf["Specific Heat Demand [kWh/m2·year]"] * gdf["Heated Area [m2]"]
+) / 1e6
+gdf["Total Cooling Demand [GWh/year]"] = (
+    gdf["Specific Cooling Demand [kWh/m2·year]"] * gdf["Cooling Area [m2]"]
 ) / 1e6
 
 # ── Save processed GeoPackage ─────────────────────────────────────────────────
