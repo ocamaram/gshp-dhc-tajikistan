@@ -135,19 +135,21 @@ heat_demand_map = {
 gdf["Specific Heat Demand [kWh/m2·year]"] = gdf["Type"].map(heat_demand_map)
 
 # ── Specific Cooling Demand ───────────────────────────────────────────────────
-# Placeholder: values to be updated when cooling demand data is available
+# Preliminary values for Dushanbe (~1,300–1,500 CDD base 18°C).
+# Residential and School assumed unrefrigerated (0). Tertiary values are
+# order-of-magnitude estimates pending measured or modelled data.
 cooling_demand_map = {
-    "Type Single Family": None,
-    "Type I":    None,
-    "Type II":   None,
-    "Type III":  None,
-    "Type IV":   None,
-    "Type V":    None,
-    "Type VI":   None,
-    "School":    None,
-    "Hospital":  None,
-    "Office":    None,
-    "Other":     None,
+    "Type Single Family": 0,
+    "Type I":    0,
+    "Type II":   0,
+    "Type III":  0,
+    "Type IV":   0,
+    "Type V":    0,
+    "Type VI":   0,
+    "School":    0,
+    "Hospital":  90.0,
+    "Office":    45.0,
+    "Other":     40.0,
 }
 gdf["Specific Cooling Demand [kWh/m2·year]"] = gdf["Type"].map(cooling_demand_map)
 

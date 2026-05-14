@@ -114,8 +114,8 @@ configurable zoom level (`MAP_ZOOM = 1.5` by default).
 | GFA→NFA factor applied | 0.70 |
 | Total heat demand | 7,199 GWh/year |
 | Weighted average specific heat demand | 77.3 kWh/m²·year |
-| Total cooling demand | pending specific cooling demand data |
-| Weighted average specific cooling demand | pending specific cooling demand data |
+| Total cooling demand | 103.1 GWh/year *(preliminary)* |
+| Weighted average specific cooling demand | — *(0 for residential/school; 40–90 for tertiary)* |
 
 ### OSM spatial join coverage
 
@@ -157,24 +157,27 @@ Type I apartment blocks are the largest contributor by NFA (42.0 M m²).
 
 ### Cooling demand by building type
 
-Cooling demand breakdown will be populated once specific cooling demand
-values per typology are available. The `cooling_demand_map` in
-`preprocess_dushanbe.py` is the single point of entry — running the two
-scripts regenerates all cooling results and maps automatically.
+> **Preliminary values.** Specific cooling demand figures are order-of-magnitude
+> estimates for Dushanbe's climate (~1,300–1,500 CDD base 18°C). Residential
+> buildings and schools are assumed unrefrigerated. Tertiary values should be
+> replaced with measured or modelled data when available; updating
+> `cooling_demand_map` in `preprocess_dushanbe.py` and re-running both scripts
+> regenerates all results and maps automatically.
 
-| Type | Buildings | NFA [M m²] | Cooling Demand [GWh/year] |
-|---|---|---|---|
-| Type Single Family | 126,059 | 25.4 | — |
-| Type I (3 floors) | 41,429 | 42.0 | — |
-| Type II (4 floors) | 9,138 | 26.1 | — |
-| Type III (5–8 floors) | 1,557 | 19.1 | — |
-| Type VI (12–20 floors) | 749 | 15.6 | — |
-| Other (tertiary) | 617 | 1.5 | — |
-| Office | 153 | 1.5 | — |
-| Type V (10–11 floors) | 113 | 1.0 | — |
-| School | 63 | 0.6 | — |
-| Type IV (9 floors) | 16 | 0.2 | — |
-| Hospital | 18 | 0.1 | — |
+| Type | SCD [kWh/m²·year] | Buildings | NFA [M m²] | Cooling Demand [GWh/year] |
+|---|---|---|---|---|
+| Type Single Family | 0 | 126,087 | 17.4 | 0.0 |
+| Type I (3 floors) | 0 | 41,429 | 29.4 | 0.0 |
+| Type II (4 floors) | 0 | 9,140 | 18.3 | 0.0 |
+| Type III (5–8 floors) | 0 | 1,558 | 13.4 | 0.0 |
+| Type VI (12–20 floors) | 0 | 753 | 11.0 | 0.0 |
+| Type V (10–11 floors) | 0 | 113 | 0.7 | 0.0 |
+| Type IV (9 floors) | 0 | 16 | 0.2 | 0.0 |
+| School | 0 | 63 | 0.4 | 0.0 |
+| Hospital | 90 *(prelim.)* | 18 | 0.1 | 7.0 |
+| Office | 45 *(prelim.)* | 153 | 1.0 | 45.8 |
+| Other | 40 *(prelim.)* | 582 | 1.3 | 50.3 |
+| **Total** | | **179,912** | **93.1** | **103.1** |
 
 ## Data
 
@@ -223,9 +226,9 @@ python3 -m venv .venv
 
 ### Tertiary (`Use = "tertiary"`)
 
-| Type | OSM tag | Specific Heat Demand [kWh/m²·year] |
-|---|---|---|
-| School | `school`, `kindergarten`, `college`, `university`, `education` | 60 |
-| Hospital | `hospital`, `clinic`, `doctors` | 102.5 |
-| Office | `office`, `commercial`, `retail`, `industrial` | 67.5 |
-| Other | all other tertiary tags | 67.5 |
+| Type | OSM tag | SHD [kWh/m²·year] | SCD [kWh/m²·year] |
+|---|---|---|---|
+| School | `school`, `kindergarten`, `college`, `university`, `education` | 60 | 0 |
+| Hospital | `hospital`, `clinic`, `doctors` | 102.5 | 90 *(prelim.)* |
+| Office | `office`, `commercial`, `retail`, `industrial` | 67.5 | 45 *(prelim.)* |
+| Other | all other tertiary tags | 67.5 | 40 *(prelim.)* |
