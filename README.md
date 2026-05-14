@@ -103,6 +103,12 @@ configurable zoom level (`MAP_ZOOM = 1.5` by default).
 ### Total heat demand
 ![Total heat demand](Results/Total_Heat_Demand.png)
 
+### Specific cooling demand *(preliminary)*
+![Specific cooling demand](Results/Specific_Cooling_Demand.png)
+
+### Total cooling demand *(preliminary)*
+![Total cooling demand](Results/Total_Cooling_Demand.png)
+
 ## Analysis
 
 ### Dataset overview
