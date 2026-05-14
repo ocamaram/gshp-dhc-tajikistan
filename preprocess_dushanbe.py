@@ -11,7 +11,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 RESIDENTIAL_TAGS = {
     "house", "detached", "semidetached_house", "bungalow", "terrace",
     "apartments", "residential", "dormitory", "block",
-    "yes;residential",
+    "yes;residential", "hotel",
 }
 
 # ── OSM tag → Type (tertiary only) ────────────────────────────────────────────
@@ -34,7 +34,6 @@ TERTIARY_TAG_TO_TYPE = {
     "mosque":       "Other",
     "church":       "Other",
     "warehouse":    "Other",
-    "hotel":        "Other",
     "education":    "School",
     "roof":         "Other",
 }
@@ -65,13 +64,13 @@ joined = joined[~joined.index.duplicated(keep="first")]
 gdf["osm_type"] = joined["type"]
 
 # ── Use: OSM where available, heuristic otherwise ─────────────────────────────
-# Heuristic: residential by default; 1-floor buildings > 500 m² → tertiary
-AREA_THRESH_TERTIARY = 500  # m²
+# Heuristic: residential by default; 1–2 floor buildings > 1000 m² → tertiary
+AREA_THRESH_TERTIARY = 1000  # m²
 
 def assign_use(row):
     if isinstance(row["osm_type"], str) and row["osm_type"]:
         return "residential" if row["osm_type"] in RESIDENTIAL_TAGS else "tertiary"
-    if row["floors"] == 1 and row["Area"] > AREA_THRESH_TERTIARY:
+    if row["floors"] <= 2 and row["Area"] > AREA_THRESH_TERTIARY:
         return "tertiary"
     return "residential"
 

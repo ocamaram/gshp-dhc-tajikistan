@@ -32,7 +32,7 @@ enriches each building with the following fields:
 
 2. **`Use` assignment** (in order of priority):
    - OSM tag available → `residential` if tag is in the residential group; `tertiary` otherwise.
-   - No OSM tag, 1-floor building with footprint area > 500 m² → `tertiary`.
+   - No OSM tag, 1–2 floor building with footprint area > 1,000 m² → `tertiary`.
    - Otherwise → `residential` (default).
 
 3. **`Tagging`** (used downstream for typology):
@@ -50,7 +50,7 @@ enriches each building with the following fields:
 | `building=` tag | Use |
 |---|---|
 | `house`, `detached`, `semidetached_house`, `bungalow`, `terrace` | residential |
-| `apartments`, `residential`, `dormitory`, `block`, `yes;residential` | residential |
+| `apartments`, `residential`, `dormitory`, `block`, `yes;residential`, `hotel` | residential |
 | `construction` | ignored (falls through to heuristic/default) |
 | everything else | tertiary |
 
@@ -61,7 +61,7 @@ enriches each building with the following fields:
 | `school`, `kindergarten`, `college`, `university`, `education` | School |
 | `hospital`, `clinic`, `doctors` | Hospital |
 | `office`, `commercial`, `retail`, `industrial` | Office |
-| `yes`, `public`, `civic`, `government`, `mosque`, `church`, `warehouse`, `hotel`, `roof` | Other |
+| `yes`, `public`, `civic`, `government`, `mosque`, `church`, `warehouse`, `roof` | Other |
 
 Output: `Results/Dushanbe_processed.gpkg`
 
