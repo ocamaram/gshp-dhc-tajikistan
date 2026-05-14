@@ -1,6 +1,7 @@
 .venv/
 Data/
-Results/
+Results/*.gpkg
+Results/*.html
 __pycache__/
 *.pyc
 .DS_Store

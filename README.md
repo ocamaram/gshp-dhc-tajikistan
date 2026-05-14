@@ -110,10 +110,12 @@ configurable zoom level (`MAP_ZOOM = 1.5` by default).
 | Metric | Value |
 |---|---|
 | Total buildings | 179,912 |
-| Total heated area (NFA) | 93.1 M m² |
-| Total heat demand | 7,199 GWh/year |
-| Weighted average SHD | 77.3 kWh/m²·year |
+| Conditioned area — NFA (heating & cooling) | 93.1 M m² |
 | GFA→NFA factor applied | 0.70 |
+| Total heat demand | 7,199 GWh/year |
+| Weighted average specific heat demand | 77.3 kWh/m²·year |
+| Total cooling demand | pending specific cooling demand data |
+| Weighted average specific cooling demand | pending specific cooling demand data |
 
 ### OSM spatial join coverage
 
@@ -135,13 +137,13 @@ after reprojection to EPSG:32642.
 
 ### Heat demand by building type
 
-| Type | Buildings | Heated Area [M m²] | Heat Demand [GWh/year] | % Total |
+| Type | Buildings | NFA [M m²] | Heat Demand [GWh/year] | % Total |
 |---|---|---|---|---|
 | Type Single Family | 126,059 | 25.4 | 3,678.6 | 35.8% |
 | Type I (3 floors) | 41,429 | 42.0 | 3,108.2 | 30.2% |
 | Type II (4 floors) | 9,138 | 26.1 | 1,436.2 | 14.0% |
 | Type III (5–8 floors) | 1,557 | 19.1 | 1,124.2 | 10.9% |
-| Type VI (≥ 12 floors) | 749 | 15.6 | 622.1 | 6.0% |
+| Type VI (12–20 floors) | 749 | 15.6 | 622.1 | 6.0% |
 | Other (tertiary) | 617 | 1.5 | 102.2 | 1.0% |
 | Office | 153 | 1.5 | 98.2 | 1.0% |
 | Type V (10–11 floors) | 113 | 1.0 | 52.1 | 0.5% |
@@ -150,8 +152,29 @@ after reprojection to EPSG:32642.
 | Hospital | 18 | 0.1 | 11.4 | 0.1% |
 
 Type Single Family dominates heat demand (35.8%) despite having the lowest
-total heated area, due to its high specific heat demand (145 kWh/m²·year).
-Type I apartment blocks are the largest contributor by heated area (42.0 M m²).
+total NFA, due to its high specific heat demand (145 kWh/m²·year).
+Type I apartment blocks are the largest contributor by NFA (42.0 M m²).
+
+### Cooling demand by building type
+
+Cooling demand breakdown will be populated once specific cooling demand
+values per typology are available. The `cooling_demand_map` in
+`preprocess_dushanbe.py` is the single point of entry — running the two
+scripts regenerates all cooling results and maps automatically.
+
+| Type | Buildings | NFA [M m²] | Cooling Demand [GWh/year] |
+|---|---|---|---|
+| Type Single Family | 126,059 | 25.4 | — |
+| Type I (3 floors) | 41,429 | 42.0 | — |
+| Type II (4 floors) | 9,138 | 26.1 | — |
+| Type III (5–8 floors) | 1,557 | 19.1 | — |
+| Type VI (12–20 floors) | 749 | 15.6 | — |
+| Other (tertiary) | 617 | 1.5 | — |
+| Office | 153 | 1.5 | — |
+| Type V (10–11 floors) | 113 | 1.0 | — |
+| School | 63 | 0.6 | — |
+| Type IV (9 floors) | 16 | 0.2 | — |
+| Hospital | 18 | 0.1 | — |
 
 ## Data
 
