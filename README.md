@@ -128,7 +128,7 @@ limited due to two independent constraints:
 | No OSM counterpart in dataset | 135,066 | 75.1% |
 | OSM match but no explicit `type` tag | 43,858 | 24.4% |
 | OSM match with `type` tag | 908 | 0.5% |
-| Tertiary by area heuristic (1 floor > 500 m²) | 534 | 0.3% |
+| Tertiary by area heuristic (1–2 floors > 1,000 m²) | 507 | 0.3% |
 | Residential by default | 178,470 | 99.2% |
 
 The low OSM match rate reflects data sparsity in Tajikistan, not a
