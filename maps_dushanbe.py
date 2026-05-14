@@ -12,7 +12,7 @@ INPUT_FILE = os.path.join("Results", "Dushanbe_processed.gpkg")
 OUTPUT_DIR = "Results"
 
 HEATMAP_COLORS = ["#FFB347", "#E84000", "#C80000", "#9B0000", "#7F0000"]
-COOLMAP_COLORS = ["#dbeafe", "#93c5fd", "#3b82f6", "#1d4ed8", "#1e3a8a"]
+COOLMAP_COLORS = ["#ffffff", "#93c5fd", "#3b82f6", "#1d4ed8", "#1e3a8a"]
 HEATMAP_CMAP   = mcolors.LinearSegmentedColormap.from_list("orange_red", HEATMAP_COLORS)
 COOLMAP_CMAP   = mcolors.LinearSegmentedColormap.from_list("blue_cold",  COOLMAP_COLORS)
 
