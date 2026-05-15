@@ -22,6 +22,17 @@ enriches each building with the following fields:
 | `Cooling Area [m2]` | Same as `Heated Area [m2]` |
 | `Total Cooling Demand [GWh/year]` | Annual cooling demand per building (null until data available) |
 
+#### Floor height estimation
+
+The number of floors is derived from the building height field using use-specific floor-to-floor heights:
+
+| Use | Floor height |
+|---|---|
+| Residential | 2.6 m |
+| Tertiary | 3.0 m |
+
+Because `Use` is determined after the floor count (which feeds the heuristic classifier), the calculation is done in two passes: an initial estimate using the residential height is used during classification; once `Use` is finalised, floors are recomputed with the correct height for each building.
+
 #### OSM Tagging → classification pipeline
 
 1. **Spatial join with Geofabrik** (`Data/Geofabrik_tajikistan.gpkg`, layer
