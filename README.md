@@ -11,7 +11,7 @@ enriches each building with the following fields:
 
 | Field | Description |
 |---|---|
-| `floors` | Number of floors estimated from building height (height / 2.5), capped at 20 |
+| `floors` | Number of floors estimated from building height using use-specific floor heights (2.6 m residential, 3.0 m tertiary), capped at 20 |
 | `Tagging` | OSM `building=*` tag value (from spatial join with Geofabrik data) |
 | `Use` | `residential` or `tertiary`, derived from OSM tag or heuristic |
 | `Type` | Building typology (see tables below) |
@@ -150,12 +150,12 @@ after reprojection to EPSG:32642.
 | Type II (4 floors) | 55 | 9,140 | 18.3 | 1,005.7 | 14.0% |
 | Type III (5–8 floors) | 59 | 1,558 | 13.4 | 788.2 | 11.0% |
 | Type VI (12–20 floors) | 40 | 753 | 11.0 | 441.2 | 6.2% |
-| Other (tertiary) | 67.5 | 582 | 1.3 | 84.8 | 1.2% |
-| Office | 67.5 | 153 | 1.0 | 68.7 | 1.0% |
-| Type V (10–11 floors) | 54 | 113 | 0.7 | 36.4 | 0.5% |
-| School | 60 | 63 | 0.4 | 24.7 | 0.3% |
-| Type IV (9 floors) | 65 | 16 | 0.2 | 11.3 | 0.2% |
-| Hospital | 102.5 | 18 | 0.1 | 8.0 | 0.1% |
+| Other (tertiary) | 81 | 582 | 1.3 | — | — |
+| Office | 81 | 153 | 1.0 | — | — |
+| Type V (10–11 floors) | 54 | 113 | 0.7 | 36.4 | — |
+| School | 72 | 63 | 0.4 | — | — |
+| Type IV (9 floors) | 65 | 16 | 0.2 | 11.3 | — |
+| Hospital | 123 | 18 | 0.1 | — | — |
 | **Total** | | **179,912** | **93.1** | **7,166.7** | **100%** |
 
 Type Single Family dominates heat demand (35.2%) despite having the lowest
@@ -235,7 +235,7 @@ python3 -m venv .venv
 
 | Type | OSM tag | SHD [kWh/m²·year] | SCD [kWh/m²·year] |
 |---|---|---|---|
-| School | `school`, `kindergarten`, `college`, `university`, `education` | 60 | 0 |
-| Hospital | `hospital`, `clinic`, `doctors` | 102.5 | 90 *(prelim.)* |
-| Office | `office`, `commercial`, `retail`, `industrial` | 67.5 | 45 *(prelim.)* |
-| Other | all other tertiary tags | 67.5 | 40 *(prelim.)* |
+| School | `school`, `kindergarten`, `college`, `university`, `education` | 72 | 0 |
+| Hospital | `hospital`, `clinic`, `doctors` | 123 | 90 *(prelim.)* |
+| Office | `office`, `commercial`, `retail`, `industrial` | 81 | 45 *(prelim.)* |
+| Other | all other tertiary tags | 81 | 40 *(prelim.)* |

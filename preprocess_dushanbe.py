@@ -44,7 +44,10 @@ gdf = gpd.read_file(INPUT_FILE)
 print(f"  {len(gdf)} polygons loaded. Columns: {list(gdf.columns)}")
 
 # ── Floors ────────────────────────────────────────────────────────────────────
-gdf["floors"] = (gdf["height"] / 2.5).astype(int).clip(lower=1, upper=20)
+FLOOR_HEIGHT_RES = 2.6  # m — used after Use is finalised
+FLOOR_HEIGHT_TER = 3.0  # m — used after Use is finalised
+# Initial estimate using residential height; corrected below once Use is known
+gdf["floors"] = (gdf["height"] / FLOOR_HEIGHT_RES).astype(int).clip(lower=1, upper=20)
 
 # ── OSM spatial join to get building tag ──────────────────────────────────────
 print("Loading OSM buildings...")
@@ -100,6 +103,14 @@ gdf["Use"] = gdf["Tagging"].apply(
     lambda tag: "residential" if tag in RESIDENTIAL_TAGS else "tertiary"
 )
 
+# ── Floors (corrected per Use) ─────────────────────────────────────────────────
+gdf["floors"] = gdf.apply(
+    lambda row: int(
+        (row["height"] / (FLOOR_HEIGHT_RES if row["Use"] == "residential" else FLOOR_HEIGHT_TER))
+    ),
+    axis=1,
+).clip(lower=1, upper=20)
+
 # ── Type ───────────────────────────────────────────────────────────────────────
 def assign_type_residential(floors):
     if floors <= 2:    return "Type Single Family"
@@ -127,10 +138,10 @@ heat_demand_map = {
     "Type IV":   65,
     "Type V":    54,
     "Type VI":   40,
-    "School":    60.0,
-    "Hospital":  102.5,
-    "Office":    67.5,
-    "Other":     67.5,
+    "School":    72.0,
+    "Hospital":  123.0,
+    "Office":    81.0,
+    "Other":     81.0,
 }
 gdf["Specific Heat Demand [kWh/m2·year]"] = gdf["Type"].map(heat_demand_map)
 
